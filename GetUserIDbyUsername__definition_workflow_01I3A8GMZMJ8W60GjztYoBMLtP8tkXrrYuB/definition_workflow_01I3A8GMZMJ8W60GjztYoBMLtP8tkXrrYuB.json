@@ -1,0 +1,127 @@
+{
+  "workflow": {
+    "unique_name": "definition_workflow_01I3A8GMZMJ8W60GjztYoBMLtP8tkXrrYuB",
+    "name": "Get User ID by Username",
+    "title": "Get User ID by Username",
+    "type": "generic.workflow",
+    "base_type": "workflow",
+    "variables": [
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "input",
+          "name": "Username",
+          "type": "datatype.string",
+          "is_required": true
+        },
+        "unique_name": "variable_workflow_01I3A8T7GANYO0p1NId5sPdWylBMAY3EqSB",
+        "object_type": "variable_workflow"
+      },
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "output",
+          "name": "User ID",
+          "type": "datatype.string",
+          "is_required": false
+        },
+        "unique_name": "variable_workflow_01I3A8QD4JWRT6eo4EAl2klU6Jt7SLg50ss",
+        "object_type": "variable_workflow"
+      }
+    ],
+    "properties": {
+      "atomic": {
+        "atomic_group": "Demo Atomics",
+        "is_atomic": true
+      },
+      "delete_workflow_instance": false,
+      "display_name": "Get User ID by Username",
+      "runtime_user": {
+        "override_target_runtime_user": false,
+        "specify_on_workflow_start": false,
+        "target_default": true
+      },
+      "target": {
+        "target_type": "web-service.endpoint",
+        "specify_on_workflow_start": true
+      }
+    },
+    "object_type": "definition_workflow",
+    "actions": [
+      {
+        "unique_name": "definition_activity_01I3A8X6FCDJW57ICUXLxVudmMAj11VHGhC",
+        "name": "HTTP Request",
+        "title": "Search for user by username",
+        "type": "web-service.http_request",
+        "base_type": "activity",
+        "properties": {
+          "action_timeout": 180,
+          "allow_auto_redirect": true,
+          "continue_on_error_status_code": false,
+          "continue_on_failure": false,
+          "display_name": "Search for user by username",
+          "method": "GET",
+          "relative_url": "/users?username=$workflow.definition_workflow_01I3A8GMZMJ8W60GjztYoBMLtP8tkXrrYuB.input.variable_workflow_01I3A8T7GANYO0p1NId5sPdWylBMAY3EqSB$",
+          "runtime_user": {
+            "override_target_runtime_user": false,
+            "target_default": true
+          },
+          "skip_execution": false,
+          "target": {
+            "override_workflow_target": false,
+            "override_workflow_target_group_criteria": false,
+            "use_workflow_target": true,
+            "use_workflow_target_group": false
+          }
+        },
+        "object_type": "definition_activity"
+      },
+      {
+        "unique_name": "definition_activity_01I3A8ZB3EC4Q2ajfSYCdqm9EDPn7DgMbO3",
+        "name": "JSONPath Query",
+        "title": "Extract user ID",
+        "type": "corejava.jsonpathquery",
+        "base_type": "activity",
+        "properties": {
+          "action_timeout": 180,
+          "continue_on_failure": false,
+          "display_name": "Extract user ID",
+          "input_json": "$activity.definition_activity_01I3A8X6FCDJW57ICUXLxVudmMAj11VHGhC.output.response_body$",
+          "jsonpath_queries": [
+            {
+              "jsonpath_query": "$.[0].id",
+              "jsonpath_query_name": "userId",
+              "jsonpath_query_type": "string"
+            }
+          ],
+          "skip_execution": false
+        },
+        "object_type": "definition_activity"
+      },
+      {
+        "unique_name": "definition_activity_01I3A9046TBE64Xx4fvYVMH9MUVnzCBNvDQ",
+        "name": "Set Variables",
+        "title": "Set output variable",
+        "type": "core.set_multiple_variables",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Set output variable",
+          "skip_execution": false,
+          "variables_to_update": [
+            {
+              "variable_to_update": "$workflow.definition_workflow_01I3A8GMZMJ8W60GjztYoBMLtP8tkXrrYuB.output.variable_workflow_01I3A8QD4JWRT6eo4EAl2klU6Jt7SLg50ss$",
+              "variable_value_new": "$activity.definition_activity_01I3A8ZB3EC4Q2ajfSYCdqm9EDPn7DgMbO3.output.jsonpath_queries.userId$"
+            }
+          ]
+        },
+        "object_type": "definition_activity"
+      }
+    ],
+    "categories": [
+      "category_1BMfMXSnJMyt5Ihqi7rWJr5N8cf"
+    ]
+  }
+}
